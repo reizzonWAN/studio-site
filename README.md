@@ -56,5 +56,5 @@ The edge's compose file mounts `/opt/sites` read-only at `/srv`.
 
 ## Links
 
-The Legal links point at the legal site on GitHub Pages (`reizzonwan.github.io/app--legal/`). When that site gets
-its own subdomain (`legal.onlinebuildstudio.com`), GitHub redirects the old URLs, and these links can be updated.
+The Legal links point at the legal site on the VPS, `https://legal.onlinebuildstudio.com/` (repo `app--legal`).
+The GitHub Pages copy at `reizzonwan.github.io/app--legal/` keeps serving the links in the app stores.
