@@ -1,0 +1,148 @@
+/* Online Build Studio. One stylesheet, no web fonts, no framework. Light and dark follow the system. */
+
+:root {
+  color-scheme: light dark;
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --text: #16181d;
+  --text-2: #50555f;
+  --text-3: #696e78;
+  --border: #e5e3dc;
+  --border-hover: #cfccc2;
+  --accent: #2747c7;
+  --live-bg: #e3f3e8;
+  --live-fg: #1b6b3a;
+  --soon-bg: #fbf0d9;
+  --soon-fg: #8a5a07;
+  --dev-bg: #eceafd;
+  --dev-fg: #4636b0;
+  --focus: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent);
+  --radius: 16px;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --serif: "Iowan Old Style", "Charter", "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1114;
+    --surface: #171a1f;
+    --text: #eceef1;
+    --text-2: #a9aeb8;
+    --text-3: #868b95;
+    --border: #262a31;
+    --border-hover: #3a3f48;
+    --accent: #8ea6ff;
+    --live-bg: #13301f;
+    --live-fg: #8fdcaa;
+    --soon-bg: #33270f;
+    --soon-fg: #f2c46b;
+    --dev-bg: #221d47;
+    --dev-fg: #b9b0ff;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+a:focus-visible { outline: none; box-shadow: var(--focus); border-radius: 6px; }
+
+.skip {
+  position: absolute; left: 16px; top: -48px; padding: 8px 12px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px; z-index: 2;
+}
+.skip:focus { top: 12px; }
+
+.wrap { width: min(1040px, 100% - 32px); margin-inline: auto; }
+
+/* Header */
+.site-header { padding-block: 24px; }
+.site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); font-weight: 600; letter-spacing: -0.01em; }
+.brand:hover { text-decoration: none; }
+.brand { white-space: nowrap; }
+.brand img { width: 28px; height: 28px; border-radius: 8px; outline: 1px solid var(--border); }
+.nav { display: flex; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.nav a { display: block; padding: 6px 10px; color: var(--text-2); font-size: 15px; border-radius: 8px; }
+.nav a:hover { color: var(--text); background: color-mix(in srgb, var(--text) 6%, transparent); text-decoration: none; }
+
+/* Hero */
+.hero { padding-block: 56px 40px; }
+.hero h1 {
+  margin: 0 0 14px; max-width: 16ch;
+  font: 400 clamp(2.25rem, 1.6rem + 3vw, 3.6rem)/1.08 var(--serif);
+  letter-spacing: -0.02em;
+}
+.hero p { margin: 0; max-width: 56ch; text-wrap: pretty; color: var(--text-2); font-size: 1.125rem; }
+
+/* App grid */
+.apps { padding-bottom: 72px; }
+.section-title { margin: 0 0 16px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-3); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
+
+.card {
+  position: relative; display: flex; gap: 16px; height: 100%;
+  padding: 20px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  transition: border-color .15s ease, transform .15s ease;
+}
+.card.is-link:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+.card.is-link:has(.card-link:focus-visible) { box-shadow: var(--focus); }
+@media (prefers-reduced-motion: reduce) { .card { transition: none; } .card.is-link:hover { transform: none; } }
+
+.app-icon { flex: none; width: 56px; height: 56px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+.app-icon img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.card-body { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.card h3 { margin: 0; font-size: 1.125rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.35; }
+.card-link { color: inherit; }
+.card-link:hover { text-decoration: none; }
+.card-link:focus-visible { box-shadow: none; }
+/* Stretch the main link over the card, keeping secondary links clickable above it. */
+.card-link::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius); }
+.card-desc { margin: 4px 0 14px; color: var(--text-2); font-size: 15px; line-height: 1.55; }
+
+.card-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; margin-top: auto; font-size: 14px; }
+.platforms { color: var(--text-3); }
+.links { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.links a { position: relative; z-index: 1; font-weight: 500; }
+.visit { color: var(--accent); font-weight: 500; }
+.arrow { display: inline-block; margin-left: 2px; transition: transform .15s ease; }
+.card.is-link:hover .arrow { transform: translate(2px, -2px); }
+
+.status { flex: none; padding: 2px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; line-height: 1.7; white-space: nowrap; }
+.status-live { background: var(--live-bg); color: var(--live-fg); }
+.status-soon { background: var(--soon-bg); color: var(--soon-fg); }
+.status-dev { background: var(--dev-bg); color: var(--dev-fg); }
+
+/* Footer */
+.site-footer { border-top: 1px solid var(--border); padding-block: 24px 40px; color: var(--text-3); font-size: 14px; }
+.site-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; }
+.site-footer ul { display: flex; flex-wrap: wrap; gap: 4px 20px; margin: 0; padding: 0; list-style: none; }
+.site-footer a { color: var(--text-2); }
+
+/* 404 and redirect pages */
+.notice { padding-block: 96px; }
+.notice h1 { margin: 0 0 12px; font: 400 2.25rem/1.15 var(--serif); letter-spacing: -0.02em; }
+.notice p { margin: 0 0 8px; color: var(--text-2); }
+
+@media (max-width: 560px) {
+  .site-header { padding-block: 16px; }
+  .site-header .wrap { gap: 8px; }
+  .nav { gap: 0; margin-right: -8px; }
+  .nav a { padding: 6px 8px; font-size: 14px; }
+  .hero { padding-block: 32px 28px; }
+  .card { padding: 16px; gap: 14px; }
+  .app-icon { width: 48px; height: 48px; border-radius: 12px; }
+}
