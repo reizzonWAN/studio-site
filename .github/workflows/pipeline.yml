@@ -1,0 +1,67 @@
+name: Studio site
+on:
+  pull_request:
+  push:
+    branches: [main, release/prod]
+  workflow_dispatch:
+    inputs:
+      deploy_production:
+        description: Publish the tested release/prod commit
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - run: |
+          bash -n scripts/deploy.sh
+          python3 - <<'PYTHON'
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          class Links(HTMLParser):
+              found = []
+              def handle_starttag(self, tag, attrs):
+                  if tag == 'a':
+                      self.found.append(dict(attrs).get('href'))
+
+          page = Links()
+          page.feed(Path('index.html').read_text())
+          assert page.found.count('https://dental.onlinebuildstudio.com/') == 1
+          PYTHON
+  deploy:
+    needs: verify
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy_production && github.ref == 'refs/heads/release/prod'
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency:
+      group: studio-site-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+      - name: Publish the approved release
+        env:
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+          DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          : "${DEPLOY_HOST:?}" "${DEPLOY_USER:?}" "${DEPLOY_SSH_KEY:?}" "${DEPLOY_KNOWN_HOSTS:?}"
+          [[ "$DEPLOY_HOST" =~ ^[A-Za-z0-9][A-Za-z0-9.-]*$ && "$DEPLOY_USER" =~ ^[a-z_][a-z0-9_-]*$ ]]
+          port="${DEPLOY_PORT:-22}"
+          [[ "$port" =~ ^[0-9]{1,5}$ ]]
+          umask 077
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/studio_ci_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/studio_ci_known_hosts
+          printf 'Host studio-production\n  HostName %s\n  IdentityFile ~/.ssh/studio_ci_key\n  UserKnownHostsFile ~/.ssh/studio_ci_known_hosts\n  StrictHostKeyChecking yes\n  BatchMode yes\n  IdentitiesOnly yes\n' "$DEPLOY_HOST" > ~/.ssh/config
+          curl --fail --silent --show-error --output /dev/null https://dental.onlinebuildstudio.com/api/health
+          SSH_PORT="$port" DEPLOY_REF="$GITHUB_SHA" bash scripts/deploy.sh "$DEPLOY_USER@studio-production"
+          curl --fail --silent --show-error https://onlinebuildstudio.com/ | grep -F 'https://dental.onlinebuildstudio.com/'

@@ -42,7 +42,7 @@ export_dir="$(mktemp -d)"
 trap 'rm -rf "$export_dir"' EXIT
 git -C "$root" archive --format=tar "$revision" | tar -x -C "$export_dir"
 # Repo-only files are not part of the site.
-rm -rf "$export_dir/scripts" "$export_dir/README.md" "$export_dir/.gitignore"
+rm -rf "$export_dir/scripts" "$export_dir/README.md" "$export_dir/.gitignore" "$export_dir/.github"
 printf '%s %s\n' "$revision" "$(git -C "$root" log -1 --format=%s "$revision")" >"$export_dir/REVISION"
 # The edge container reads the files as a non-root user: make everything world-readable.
 chmod -R a+rX "$export_dir"
