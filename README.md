@@ -51,6 +51,10 @@ It fetches origin, exports exactly `origin/release/prod` with `git archive`, and
 `/opt/sites/studio-site`; local or unpushed changes never ship. Caddy serves straight from disk, so there is nothing
 to restart. Emergency hotfix only: `DEPLOY_REF=<commit> scripts/deploy.sh …`, then merge it into `release/prod`.
 
+Deploys are always manual, like Care First and Dental Management. The GitHub workflow only verifies the site; it has
+no deploy job and no server credentials. Publish after Dental Management is deployed, so the homepage never links to
+an app that isn't live.
+
 **First-time setup** (once, on the server): `sudo install -d -m 755 -o deploy -g deploy /opt/sites/studio-site`.
 The edge's compose file mounts `/opt/sites` read-only at `/srv`.
 
