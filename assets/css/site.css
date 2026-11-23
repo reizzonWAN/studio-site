@@ -102,7 +102,6 @@ a:focus-visible { outline: none; box-shadow: var(--focus); border-radius: 6px; }
 
 .app-icon { flex: none; width: 56px; height: 56px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
 .app-icon img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.app-icon-dental-management { display: grid; place-items: center; background: #e4edf6; color: #355b79; font: 600 17px Georgia, serif; }
 
 .card-body { display: flex; flex-direction: column; flex: 1; min-width: 0; }
 .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
