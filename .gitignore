@@ -1,1 +1,4 @@
 .DS_Store
+
+# Read by the vps-deploy skill; never published with the site.
+/deploy/ops.env
