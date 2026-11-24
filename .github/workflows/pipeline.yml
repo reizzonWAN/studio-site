@@ -1,8 +1,7 @@
 name: Studio site
 on:
-  pull_request:
   push:
-    branches: [main, release/prod]
+    branches: [release/uat, release/prod]
   workflow_dispatch:
 permissions:
   contents: read
